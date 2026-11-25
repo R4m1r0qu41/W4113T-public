@@ -1,0 +1,57 @@
+{
+ "contractName": "TestSpender",
+ "source": "src/TestSpender.sol",
+ "solc": "0.8.24",
+ "note": "Committed build artifact for the demo/tests. Rebuild: forge build, then scripts/update-artifacts.py (see README.md).",
+ "bytecode": "0x608060405234801561000f575f80fd5b506101f88061001d5f395ff3fe608060405234801561000f575f80fd5b5060043610610029575f3560e01c80637372c2b51461002d575b5f80fd5b61004061003b366004610163565b610042565b005b6040516323b872dd60e01b81526001600160a01b038381166004830152306024830152604482018390528416906323b872dd906064016020604051808303815f875af1158015610094573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906100b8919061019c565b6100f65760405162461bcd60e51b815260206004820152600b60248201526a1c1d5b1b0819985a5b195960aa1b604482015260640160405180910390fd5b816001600160a01b0316836001600160a01b03167fe7604cacd688915900b1f2267bef2bcbf979d1b00df94edb2e22d1c18e99697e8360405161013b91815260200190565b60405180910390a3505050565b80356001600160a01b038116811461015e575f80fd5b919050565b5f805f60608486031215610175575f80fd5b61017e84610148565b925061018c60208501610148565b9150604084013590509250925092565b5f602082840312156101ac575f80fd5b815180151581146101bb575f80fd5b939250505056fea2646970667358221220dc15dcaee72066315875f0896f4979c58d8a28a8eaf9a7a2e1a81adb600d4dae64736f6c63430008180033",
+ "abi": [
+  {
+   "type": "function",
+   "name": "pull",
+   "inputs": [
+    {
+     "name": "token",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "from",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "event",
+   "name": "Pulled",
+   "inputs": [
+    {
+     "name": "token",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "from",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    }
+   ],
+   "anonymous": false
+  }
+ ]
+}

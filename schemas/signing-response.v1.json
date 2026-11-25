@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/signing-response.v1.json",
+  "title": "SigningResponse",
+  "description": "Vault/pipeline answer to a signing request, carrying the terminal (or current) lifecycle state and refusal reasons. Never contains key material; the signature appears only as the broadcastable artifact (or, for typed_data/personal_message, the raw signature). v1.1: signing_request_id is nullable — null means the request was refused before a Vault signing request existed (validation/permission/policy refusal); found via the browser-connect conformance harness. v1.2: optional review_evidence — display-only pipeline evidence (decoded intent, simulation outcome, risk findings, policy verdict/reasons) so consumer UIs can show why the wallet decided; it carries no authority and is never consumed by any wallet decision path. v1.3 (protocol v0.4, additive): optional signature_hex carries the raw ECDSA signature for typed_data/personal_message requests, which terminate at state=SIGNED (no broadcast step exists for a signature-only request — that is a legitimate, not partial, success state for those kinds).",
+  "type": "object",
+  "required": ["schema_version", "signing_response_id", "signing_request_id", "request_id", "responded_at", "state", "audit_head_sequence"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "signing_response_id": { "type": "string", "format": "uuid" },
+    "signing_request_id": { "type": ["string", "null"], "format": "uuid", "description": "null = refused before a Vault signing request existed" },
+    "request_id": { "type": "string", "format": "uuid" },
+    "responded_at": { "type": "string", "format": "date-time" },
+    "state": {
+      "enum": ["SIGNED", "BROADCAST", "CONFIRMED", "REJECTED", "BLOCKED", "EXPIRED", "CANCELLED", "SIMULATION_FAILED", "POLICY_DENIED", "SIGNING_FAILED", "BROADCAST_FAILED", "REPLACED", "DROPPED", "UNKNOWN"],
+      "description": "signing-state-machine state at response time"
+    },
+    "tx_hash": { "type": ["string", "null"], "pattern": "^0x[0-9a-fA-F]{64}$", "description": "null = signed/attempted but hash unknown; absent = not applicable (e.g. typed_data/personal_message, which carry signature_hex instead)" },
+    "signature_hex": { "type": ["string", "null"], "pattern": "^0x([0-9a-fA-F]{2})*$", "description": "v1.3: present iff a typed_data/personal_message signature was produced (65-byte r/s/v). Absent for evm_transaction requests and for any refusal." },
+    "refusal_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "detail"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string", "description": "POL-*, VLT-*, or state-machine code" },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "audit_head_sequence": { "type": "integer", "minimum": 0, "description": "audit-log sequence number of the last event for this request — lets callers reference the auditable trail" },
+    "review_evidence": {
+      "type": "object",
+      "description": "v1.2, display-only: pipeline evidence summary for consumer UIs. Strings only; no authority, no override hooks. Absent when the request was refused before an intent was decoded.",
+      "required": ["decoded_action", "intent_confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "decoded_action": { "type": "string", "description": "decoded action kind (+ function signature when known)" },
+        "intent_confidence": { "type": "string" },
+        "simulation": { "type": "string", "description": "simulation outcome + standing-limitation count; absent = simulation never ran" },
+        "risk_level": { "type": "string", "description": "aggregated risk level; UNKNOWN is spelled out, never softened" },
+        "risk_findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["detector", "risk_level", "reason_codes", "explanation"],
+            "additionalProperties": false,
+            "properties": {
+              "detector": { "type": "string" },
+              "risk_level": { "type": "string" },
+              "reason_codes": { "type": "array", "items": { "type": "string" } },
+              "explanation": { "type": "string" }
+            }
+          }
+        },
+        "detectors_unavailable": { "type": "array", "items": { "type": "string" } },
+        "policy_verdict": { "type": "string", "description": "Allow | Escalate | Deny; absent = policy never ran" },
+        "policy_reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "ext": { "type": "object" }
+  }
+}

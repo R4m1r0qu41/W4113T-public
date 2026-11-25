@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.1",
+  "codes": [
+    { "code": "SG-ALLOW-001", "title": "Unlimited allowance requested", "meaning": "The evaluated action grants an effectively unbounded token allowance to a spender.", "deprecated": false },
+    { "code": "SG-ALLOW-002", "title": "Allowance to unverified spender", "meaning": "An allowance is granted to a contract with no verification/reputation evidence available.", "deprecated": false },
+    { "code": "SG-ALLOW-003", "title": "Blanket operator approval", "meaning": "The action grants collection-wide operator authority (setApprovalForAll-class), equivalent to unlimited transfer rights over the assets.", "deprecated": false },
+    { "code": "SG-DRAIN-001", "title": "Drainer-pattern interaction", "meaning": "The action matches a known wallet-drainer mechanic (e.g. broad approval followed by sweep authority).", "deprecated": false },
+    { "code": "SG-DOM-001", "title": "Lookalike domain", "meaning": "The origin domain is a homoglyph/typosquat candidate of a known target.", "deprecated": false },
+    { "code": "SG-DOM-002", "title": "Recently registered domain", "meaning": "The origin domain's observed age is below the caution threshold.", "deprecated": false },
+    { "code": "SG-DOM-003", "title": "Encoded (punycode) label", "meaning": "The host contains an xn-- encoded label, a common carrier for homoglyph attacks; review the decoded form.", "deprecated": false },
+    { "code": "SG-DOM-004", "title": "Brand embedded in deceptive host", "meaning": "A known brand appears as a subdomain or token of a host whose registrable domain is unrelated to that brand.", "deprecated": false },
+    { "code": "SG-IMP-001", "title": "Impersonation indicator", "meaning": "Content or identity signals impersonate a known brand, person, or contract.", "deprecated": false },
+    { "code": "SG-INJ-001", "title": "Command-injection ask", "meaning": "Content asks the target to execute commands, paste code, or bypass safeguards.", "deprecated": false },
+    { "code": "SG-ASK-001", "title": "Seed phrase / private key request", "meaning": "Content asks the target to reveal, enter, verify, or import a seed phrase, recovery phrase, or private key.", "deprecated": false },
+    { "code": "SG-ASK-002", "title": "Crypto prepayment ask", "meaning": "Content asks for cryptocurrency payment as a precondition (job, prize, release of funds, verification).", "deprecated": false },
+    { "code": "SG-ASK-003", "title": "Gift card payment ask", "meaning": "Content asks the target to buy or share gift cards / gift card codes as payment.", "deprecated": false },
+    { "code": "SG-ASK-004", "title": "Remote access / software install ask", "meaning": "Content asks the target to install remote-access or screen-sharing software, or to grant device control.", "deprecated": false },
+    { "code": "SG-CON-001", "title": "Unverified contract", "meaning": "No verified source or reputation evidence exists for the contract.", "deprecated": false },
+    { "code": "SG-UNK-001", "title": "Insufficient evidence", "meaning": "The detector could not gather enough evidence to assess the subject; result is unknown, not low.", "deprecated": false },
+    { "code": "SG-MOCK-001", "title": "Mock finding", "meaning": "Produced by a labeled mock detector for testing/demonstration; carries no real detection meaning.", "deprecated": false }
+  ]
+}

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CipherLayer Wallet</title>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <main id="app" class="shell" data-view="assets">
+      <aside class="rail" aria-label="Wallet navigation">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">CL</div>
+          <div>
+            <strong>CipherLayer</strong>
+            <span>Wallet</span>
+          </div>
+        </div>
+        <nav class="nav" aria-label="Primary">
+          <button class="nav-item is-active" type="button" data-target="assets">Assets</button>
+          <button class="nav-item" type="button" data-target="review">Review</button>
+          <button class="nav-item" type="button" data-target="accounts">Accounts</button>
+          <button class="nav-item" type="button" data-target="policy">Policy</button>
+          <button class="nav-item" type="button" data-target="audit">Audit</button>
+        </nav>
+        <section class="boundary-panel" aria-label="Boundary status">
+          <h2>Boundary</h2>
+          <dl>
+            <div>
+              <dt>Vault</dt>
+              <dd data-status="vault">vaultd process</dd>
+            </div>
+            <div>
+              <dt>Custody</dt>
+              <dd data-status="custody">MOCKED dev key</dd>
+            </div>
+            <div>
+              <dt>Surface</dt>
+              <dd data-status="surface">Vault-owned</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" data-bind="topbarEyebrow">Local prototype</p>
+            <h1 data-bind="topbarTitle">Transaction review</h1>
+          </div>
+          <div class="status-strip" aria-label="Runtime status">
+            <span class="status-pill good" data-bind="chain">Anvil 31337</span>
+            <span class="status-pill warn" data-bind="risk">Unknown risk</span>
+            <span class="status-pill neutral" data-bind="protocol">protocol v0.3</span>
+          </div>
+        </header>
+
+        <section class="view is-visible" data-view-panel="assets">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Unified view</p>
+                <h2>Everything you own</h2>
+                <p class="surface-note">Fixture holdings — not live chain/adapter balances.</p>
+              </div>
+              <div class="segmented" role="group" aria-label="Network filter">
+                <button class="is-selected" type="button" data-network-filter="all">All</button>
+                <button type="button" data-network-filter="development">Dev</button>
+                <button type="button" data-network-filter="testnet">Testnet</button>
+                <button type="button" data-network-filter="mainnet">Mainnet</button>
+              </div>
+            </div>
+            <div class="assets-toolbar">
+              <div class="segmented" role="group" aria-label="Asset type filter">
+                <button class="is-selected" type="button" data-type-filter="all">All</button>
+                <button type="button" data-type-filter="token">Tokens</button>
+                <button type="button" data-type-filter="nft">NFTs</button>
+              </div>
+              <div class="chip-row" data-bind-list="chain-chips" aria-label="Chain filter"></div>
+              <input
+                class="search"
+                type="search"
+                placeholder="Filter by name or symbol"
+                data-action="asset-search"
+                aria-label="Filter assets by name or symbol"
+              >
+            </div>
+            <p class="assets-summary" data-bind="assetsSummary"></p>
+            <div class="chain-groups" data-bind-list="assets"></div>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="review">
+          <div class="review-grid">
+            <section class="panel intent-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Intent</p>
+                  <h2 data-bind="intentTitle">Native transfer</h2>
+                </div>
+                <span class="confidence" data-bind="confidence">confidence 0.92</span>
+              </div>
+              <dl class="facts">
+                <div>
+                  <dt>From</dt>
+                  <dd data-bind="from"></dd>
+                </div>
+                <div>
+                  <dt>To</dt>
+                  <dd data-bind="to"></dd>
+                </div>
+                <div>
+                  <dt>Value</dt>
+                  <dd data-bind="value"></dd>
+                </div>
+                <div>
+                  <dt>Network</dt>
+                  <dd data-bind="network"></dd>
+                </div>
+              </dl>
+            </section>
+
+            <section class="panel evidence-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Evidence</p>
+                  <h2>Simulation and risk</h2>
+                </div>
+                <span class="status-pill good" data-bind="simulationStatus">Success</span>
+              </div>
+              <div class="evidence-list" data-bind-list="evidence"></div>
+            </section>
+
+            <section class="panel decision-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Policy</p>
+                  <h2 data-bind="policyVerdict">Escalate</h2>
+                </div>
+                <span class="status-pill warn">requires Vault review</span>
+              </div>
+              <ul class="reason-list" data-bind-list="reasons"></ul>
+              <div class="actions">
+                <button class="button secondary" type="button" data-action="reject">Reject</button>
+                <button class="button primary" type="button" data-action="vault-review">Open Vault review</button>
+              </div>
+              <p class="surface-note" data-bind="decisionNote"></p>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="accounts">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Accounts</p>
+                <h2>Wallet profiles</h2>
+              </div>
+              <div class="segmented" role="group" aria-label="Profile filter">
+                <button class="is-selected" type="button" data-profile-filter="all">All</button>
+                <button type="button" data-profile-filter="hot">Hot</button>
+                <button type="button" data-profile-filter="watch">Watch</button>
+              </div>
+            </div>
+            <div class="account-table" data-bind-list="accounts"></div>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="policy">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Rules</p>
+                <h2>Active policy</h2>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" data-action="toggle-unknown" checked>
+                <span>Unknown escalates</span>
+              </label>
+            </div>
+            <div class="policy-grid" data-bind-list="policy"></div>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="audit">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Audit</p>
+                <h2>Recent lifecycle events</h2>
+              </div>
+              <span class="status-pill neutral">hash chained</span>
+            </div>
+            <ol class="timeline" data-bind-list="audit"></ol>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+# cargo-audit policy. Every ignore here is an ACCEPTED, DOCUMENTED risk, not a
+# fix. Each entry needs: the reason, why it is unreachable/tolerable, and a
+# removal trigger. Recorded in docs/security/prototype-limitations.md (item 9).
+# Never add an ignore without all three.
+
+[advisories]
+ignore = [
+    # zstd 0.13.3 / zstd-safe 7.2.4, pulled in only by solana-account-decoder
+    # 3.1.14 (requires `zstd ^0.13.3`; the only newer Solana release is a 4.x
+    # alpha, so no compatible fix exists). The wallet's Solana RPC use is
+    # get_balance / get_signature_statuses / get_latest_blockhash /
+    # send_transaction (crates/cipherlayer-sol/src/adapter.rs); none returns
+    # zstd-encoded account data, and Solana's decoder calls Decoder::new /
+    # Encoder::new rather than the `with_context` functions RUSTSEC-2026-0391
+    # flags. Decision: operator, 2026-11-01.
+    # REMOVE when a stable solana-* >= 4 (zstd >= 0.14.3, zstd-safe >= 8.2.0)
+    # is adopted.
+    "RUSTSEC-2026-0391", # zstd: stream data leaks into next stream on reused context
+    "RUSTSEC-2026-0403", # zstd-safe: uninitialized memory on failed legacy-frame decompress
+    "RUSTSEC-2026-0398", # zstd-safe: Seekable::decompress sets Vec length past capacity
+
+    # NOT ignored on purpose: RUSTSEC-2026-0387 (crypto-bigint 0.5.5). It sits on
+    # the vault signing path (alloy-signer-local -> k256 0.13 Scalar over
+    # crypto-bigint U256) and has no compatible fix (alloy 2.5.0 still needs
+    # k256 ^0.13). It stays failing until the operator decides or alloy moves to
+    # k256 0.14 / crypto-bigint >= 0.7.6.
+]

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/agent-authorization.v1.json",
+  "title": "AgentAuthorization",
+  "description": "Bounded AI-agent capability (BS §6.11). Agent EXECUTION is deferred (no runtime exists); the schema is fixed now so future agent work cannot invent authority. authority_level 'bounded_execution' additionally requires a session-key design ADR before any implementation. No level grants key access.",
+  "type": "object",
+  "required": ["schema_version", "authorization_id", "agent_id", "authority_level", "account", "chain_id", "issued_at", "expires_at", "revocation_method", "notification_rules"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "authorization_id": { "type": "string", "format": "uuid" },
+    "agent_id": { "type": "string", "minLength": 1, "description": "e.g. 'agent:trading-assistant'" },
+    "authority_level": {
+      "enum": ["read_only", "prepare_only", "simulation_only", "propose_transaction", "bounded_execution"],
+      "description": "the authority ladder; 'unrestricted' is intentionally not a member"
+    },
+    "account": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$" },
+    "chain_id": { "type": "integer", "minimum": 1 },
+    "contracts": { "type": ["array", "null"], "items": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$" } },
+    "functions": { "type": ["array", "null"], "items": { "type": "string" } },
+    "assets": { "type": ["array", "null"], "items": { "type": "string" } },
+    "max_value_wei_per_tx": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" },
+    "max_value_wei_per_day": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" },
+    "max_frequency_per_hour": { "type": ["integer", "null"], "minimum": 1 },
+    "max_slippage_bps": { "type": ["integer", "null"], "minimum": 0, "maximum": 10000 },
+    "max_gas_limit": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time", "description": "mandatory expiry" },
+    "revoked_at": { "type": ["string", "null"], "format": "date-time" },
+    "revocation_method": { "type": "string", "minLength": 1, "description": "how the user revokes (must be one action, always available)" },
+    "requires_user_confirmation": { "type": "boolean", "default": true, "description": "true for every level in milestone scope; bounded_execution semantics deferred" },
+    "notification_rules": {
+      "type": "object",
+      "required": ["on_proposal", "on_execution"],
+      "additionalProperties": false,
+      "properties": {
+        "on_proposal": { "type": "boolean" },
+        "on_execution": { "type": "boolean" },
+        "on_denial": { "type": ["boolean", "null"] }
+      }
+    },
+    "ext": { "type": "object" }
+  }
+}

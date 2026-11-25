@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/chain-registry-entry.v1.json",
+  "title": "ChainRegistryEntry",
+  "description": "Chain identity + safety metadata. network_class drives the milestone-1 signing gate: only 'development' chains may sign (ADR-006). Current minor version: 1.1 (additive: chain_family, expected_genesis_hash — ADR-021); 1.0 instances remain valid, absent chain_family means 'evm'.",
+  "type": "object",
+  "required": ["schema_version", "chain_id", "name", "network_class", "native_currency"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "chain_id": { "type": "integer", "minimum": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "network_class": { "enum": ["development", "testnet", "mainnet"], "description": "safety class — signing gates and warnings key off this" },
+    "chain_family": { "enum": ["evm", "solana", "bitcoin"], "default": "evm", "description": "v1.1 additive. Protocol family; only 'evm' entries may appear on EIP-1193-facing wire surfaces (the 900000-band internal ids never leave the registry — ADR-016/ADR-021)" },
+    "expected_genesis_hash": { "type": ["string", "null"], "description": "v1.1 additive. Pinned genesis hash for fixed-genesis non-EVM networks; adapters re-verify it live and fail closed on mismatch (ADR-016 §3, ADR-021)" },
+    "native_currency": {
+      "type": "object",
+      "required": ["symbol", "decimals"],
+      "additionalProperties": false,
+      "properties": {
+        "symbol": { "type": "string" },
+        "decimals": { "type": "integer", "minimum": 0, "maximum": 36 }
+      }
+    },
+    "rpc_profiles": { "type": "array", "items": { "$ref": "rpc-profile.v1.json" } },
+    "explorer_url": { "type": ["string", "null"], "format": "uri" },
+    "notes": { "type": ["string", "null"], "description": "safety notes surfaced to the user (e.g. 'value on this chain is real')" },
+    "ext": { "type": "object" }
+  }
+}

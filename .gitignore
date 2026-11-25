@@ -1,0 +1,43 @@
+# Rust
+/target/
+crates/*/target/
+**/*.rs.bk
+
+# cargo-cyclonedx writes per-crate sbom.json before `make sbom` moves it into
+# target/sbom/ — ignore any stray copy left by a direct/interrupted run.
+crates/*/sbom.json
+
+# Node (future desktop app)
+node_modules/
+dist/
+
+# Foundry
+fixtures/contracts/out/
+fixtures/contracts/cache/
+fixtures/contracts/broadcast/
+
+# Secrets — never commit key material
+.env
+*.key
+*.pem
+*.seed
+*.mnemonic
+**/keystore/
+**/wallet-files/
+
+# Local state
+*.local.json
+/data/
+*.db
+*.sqlite
+audit-log*.jsonl
+!fixtures/**/audit-log*.jsonl
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Session handoff mechanism — agent-to-agent relay state, not project docs
+HANDOFF.md

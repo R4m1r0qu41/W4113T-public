@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/risk-evidence-bundle.v1.json",
+  "title": "RiskEvidenceBundle",
+  "description": "Aggregated detector evidence. Aggregation preserves everything: individual findings are never dropped, unknown never becomes low, disagreement becomes 'conflicting' with all sides visible. Consumes detector-output.v1 (pinned scam-guard contract, ../imports/scam-guard/).",
+  "type": "object",
+  "required": ["schema_version", "bundle_id", "request_id", "aggregated_at", "overall_level", "overall_rationale", "findings", "provenance"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "bundle_id": { "type": "string", "format": "uuid" },
+    "request_id": { "type": "string", "format": "uuid" },
+    "aggregated_at": { "type": "string", "format": "date-time" },
+    "overall_level": {
+      "enum": ["low", "medium", "high", "critical", "unknown", "conflicting"],
+      "description": "aggregate: max severity of confident findings; 'unknown' when no detector produced confident evidence; 'conflicting' when confident detectors disagree materially"
+    },
+    "overall_rationale": { "type": "string", "minLength": 1, "description": "human-readable explanation composed only from findings below — no unexplained verdicts" },
+    "findings": {
+      "type": "array",
+      "description": "verbatim normalized detector outputs (detector-output.v1 instances); empty array is legal and MUST yield overall_level=unknown",
+      "items": { "$ref": "../imports/scam-guard/detector-output.v1.json" }
+    },
+    "conflicts": {
+      "type": "array",
+      "description": "explicit pairs of materially disagreeing findings, both visible",
+      "items": {
+        "type": "object",
+        "required": ["finding_a", "finding_b", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "finding_a": { "type": "string", "description": "output_id of first finding" },
+          "finding_b": { "type": "string", "description": "output_id of second finding" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "detectors_unavailable": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "detectors that were configured but did not answer — visible absence, not silent absence"
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["producer", "producer_version", "detector_contract_version"],
+      "additionalProperties": false,
+      "properties": {
+        "producer": { "type": "string" },
+        "producer_version": { "type": "string" },
+        "detector_contract_version": { "type": "string", "description": "version of the pinned scam-guard detector contract" }
+      }
+    },
+    "ext": { "type": "object" }
+  }
+}

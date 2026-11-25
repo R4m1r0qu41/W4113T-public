@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/vault-signing-response.v1.json",
+  "title": "VaultSigningResponse",
+  "description": "The vault daemon's answer to a signing-request.v1 over the ADR-004 process boundary: the signed artifact or a coded refusal. Narrower than signing-response.v1 (which is the pipeline/browser-level response, carries lifecycle state and audit head): the daemon knows nothing of the pipeline lifecycle and holds no audit log. Never contains key material. v1.1 (protocol v0.4, additive): signature_hex carries the raw signature for typed_data/personal_message payload kinds (raw_tx_hex/tx_hash stay null for those; signature_hex stays null for evm_transaction).",
+  "type": "object",
+  "required": ["schema_version", "signing_request_id", "responded_at", "state"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "signing_request_id": { "type": "string", "format": "uuid" },
+    "responded_at": { "type": "string", "format": "date-time" },
+    "state": { "enum": ["SIGNED", "REFUSED"] },
+    "raw_tx_hex": { "type": ["string", "null"], "pattern": "^0x([0-9a-fA-F]{2})*$", "description": "broadcastable signed transaction; present iff state=SIGNED and kind=evm_transaction" },
+    "tx_hash": { "type": ["string", "null"], "pattern": "^0x[0-9a-fA-F]{64}$" },
+    "signature_hex": { "type": ["string", "null"], "pattern": "^0x([0-9a-fA-F]{2})*$", "description": "v1.1: present iff state=SIGNED and kind=typed_data|personal_message (65-byte r/s/v signature)" },
+    "refusal": {
+      "type": ["object", "null"],
+      "required": ["code", "detail"],
+      "additionalProperties": false,
+      "description": "present iff state=REFUSED",
+      "properties": {
+        "code": { "type": "string", "pattern": "^VLT-[A-Z]{3}-[0-9]{3}$", "description": "VLT-LCK-001 locked · VLT-CAP-001 capability · VLT-POL-001 policy deny · VLT-POL-002 unacknowledged escalation · VLT-CHN-001 non-development chain · VLT-ACC-001 account mismatch · VLT-KEY-001 real key forbidden · VLT-SIG-001 signer error · VLT-USR-001 rejected at the Vault-side confirmation surface · VLT-SUR-001 confirmation surface unavailable or failed integrity (fail closed) · VLT-MSG-001 malformed typed_data/personal_message payload (v0.4; the Vault could not independently re-derive what it was asked to sign)" },
+        "detail": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+[package]
+name = "cipherlayer-vault"
+description = "Vault: signer abstraction, test signer, capability validation, lock state, and the ADR-004 IPC wire format + client. Test keys only (ADR-005)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+cipherlayer-types = { workspace = true }
+cipherlayer-policy = { workspace = true }
+# ADR-021: genesis pins referenced from the chain registry constants (never
+# re-typed), plus the runtime-key wipe primitives.
+cipherlayer-chain = { workspace = true }
+five8 = { workspace = true }
+zeroize = { workspace = true }
+cipherlayer-evm = { workspace = true }
+alloy = { workspace = true, features = ["std", "signers", "signer-local", "consensus", "network", "rpc-types", "eips"] }
+solana-keypair = { workspace = true }
+solana-message = { workspace = true }
+solana-pubkey = { workspace = true }
+solana-signer = { workspace = true }
+solana-system-interface = { workspace = true }
+solana-transaction = { workspace = true }
+bitcoin = { workspace = true }
+bincode = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+tokio = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"

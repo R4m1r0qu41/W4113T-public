@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CipherLayer — MetaMask Lifecycle Harness (Sepolia, originator-side)</title>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 44rem; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.3rem; }
+  .warn { color: #b8410a; font-weight: 600; }
+  .step { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  .step.done { border-color: #2a8; background: #f3fbf7; }
+  label { display: block; margin: .5rem 0 .2rem; font-size: .9rem; }
+  input { width: 100%; box-sizing: border-box; padding: .4rem; font-family: monospace; }
+  button { margin-top: .6rem; padding: .5rem 1rem; font-size: 1rem; cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .5; }
+  #log { background: #111; color: #9f9; padding: 1rem; white-space: pre-wrap; font-family: monospace;
+         font-size: .8rem; min-height: 8rem; border-radius: 6px; max-height: 20rem; overflow-y: auto; }
+  code { background: #eee; padding: .1rem .3rem; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>CipherLayer — MetaMask Lifecycle Harness</h1>
+<p class="warn">Originator-side. Spend-capable. Every send requires you to type an approval phrase here,
+   then approve again inside MetaMask's own popup — MetaMask is the trusted confirmation surface, not this page.
+   Sepolia testnet only; this page refuses every other chain.</p>
+
+<div class="step" id="step-connect">
+  <strong>1. Connect MetaMask</strong>
+  <div>Detects <code>window.ethereum</code> and requires <code>isMetaMask</code> — refuses to proceed with any other injected provider.</div>
+  <button id="btn-connect">Connect MetaMask</button>
+</div>
+
+<div class="step" id="step-chain">
+  <strong>2. Verify / switch to Sepolia (chain id 11155111 / 0xaa36a7)</strong>
+  <button id="btn-chain" disabled>Check chain</button>
+</div>
+
+<div class="step" id="step-preview">
+  <strong>3. Preview transaction</strong>
+  <label>Recipient (default: send to self — no third party required)</label>
+  <input id="recipient" placeholder="0x...">
+  <label>Value in wei (default: 1 — mirrors the Arrow lifecycle-harness minimal-value convention)</label>
+  <input id="value-wei" value="1">
+  <button id="btn-preview" disabled>Preview</button>
+</div>
+
+<div class="step" id="step-send">
+  <strong>4. Send (requires the approval phrase)</strong>
+  <label>Type <code>SEND-METAMASK-SEPOLIA-LIFECYCLE</code> to enable Send:</label>
+  <input id="approval-phrase" autocomplete="off">
+  <button id="btn-send" disabled>Send via MetaMask</button>
+</div>
+
+<div class="step" id="step-verify">
+  <strong>5. Observer verification (read-only, safe to automate)</strong>
+  <button id="btn-verify" disabled>Poll for receipt</button>
+  <div id="artifact-wrap" style="display:none">
+    <p>Evidence artifact (feed to <code>verify-artifact.sh</code> or save under <code>docs/test/evidence/</code>):</p>
+    <textarea id="artifact" rows="8" style="width:100%; font-family:monospace; font-size:.75rem;" readonly></textarea>
+  </div>
+</div>
+
+<h3>Log</h3>
+<div id="log"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

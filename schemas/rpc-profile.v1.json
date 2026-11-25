@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/rpc-profile.v1.json",
+  "title": "RpcProfile",
+  "description": "One RPC endpoint with its trust/privacy class. Remote endpoints leak address↔IP to the operator (T-21); privacy_note is mandatory for non-local classes.",
+  "type": "object",
+  "required": ["schema_version", "profile_id", "name", "url", "endpoint_class"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "profile_id": { "type": "string", "minLength": 1, "description": "stable slug, e.g. 'anvil-local'" },
+    "name": { "type": "string", "minLength": 1 },
+    "url": { "type": "string", "format": "uri" },
+    "endpoint_class": { "enum": ["local", "self_hosted", "public", "premium"], "description": "trust & privacy class" },
+    "privacy_note": { "type": ["string", "null"], "description": "mandatory (non-null) unless endpoint_class is local/self_hosted" },
+    "auth_env_var": { "type": ["string", "null"], "description": "name of env var holding credentials — the credential itself never appears in config" },
+    "ext": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "endpoint_class": { "enum": ["public", "premium"] } } },
+      "then": { "properties": { "privacy_note": { "type": "string", "minLength": 1 } }, "required": ["privacy_note"] }
+    }
+  ]
+}

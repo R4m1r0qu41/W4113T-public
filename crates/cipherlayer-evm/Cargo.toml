@@ -1,0 +1,28 @@
+[package]
+name = "cipherlayer-evm"
+description = "Deterministic EVM calldata decoding, approval/permit detection, address validation."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+cipherlayer-types = { workspace = true }
+cipherlayer-chain = { workspace = true }
+alloy = { workspace = true, features = ["std", "providers", "provider-http", "reqwest-rustls-tls", "rpc-types", "json"] }
+# Direct, narrowly-featured dependency on the EIP-712 typed-data resolver
+# (already present in the workspace's alloy 2.1.0 dependency tree at this
+# exact pinned version — not a new supply-chain addition). Deliberately not
+# routed through `alloy`'s own "eip712" umbrella feature: that feature also
+# forwards to the optional AWS/GCP/Ledger/Turnkey remote-signer backends
+# (`alloy-signer-{aws,gcp,ledger,turnkey}`), which would otherwise be pulled
+# into the build for a feature this crate never uses.
+alloy-dyn-abi = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+hex = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+tokio = { workspace = true }

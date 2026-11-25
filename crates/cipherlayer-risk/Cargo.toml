@@ -1,0 +1,16 @@
+[package]
+name = "cipherlayer-risk"
+description = "FPL/Scam Guard detector consumer: detector trait, normalization, conflict-preserving aggregation, mock detector."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+cipherlayer-types = { workspace = true }
+cipherlayer-intent = { workspace = true }
+cipherlayer-evm = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }

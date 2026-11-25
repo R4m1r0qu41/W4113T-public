@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/signing-request.v1.json",
+  "title": "SigningRequest",
+  "description": "The only message that may ask the Vault to sign. The Vault IPC wire format (ADR-004, implemented). The Vault independently re-validates capability, expiry, policy verdict, user authorization, lock state, and chain class — a well-formed request is necessary but not sufficient. v1.2: user_authorization is nullable — null is legal only on the daemon's confirm_and_sign message, where the Vault-side confirmation surface obtains the decision itself before signing (trusted-confirmation-surface.md requirement 3); sign_request still requires it present.",
+  "type": "object",
+  "required": ["schema_version", "signing_request_id", "request_id", "intent_id", "decision_id", "created_at", "account", "chain_id", "capability", "user_authorization", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "signing_request_id": { "type": "string", "format": "uuid" },
+    "request_id": { "type": "string", "format": "uuid" },
+    "intent_id": { "type": "string", "format": "uuid" },
+    "decision_id": { "type": "string", "format": "uuid", "description": "policy decision this signing rests on; verdict must be allow, or escalate with satisfied escalation" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "account": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$" },
+    "chain_id": { "type": "integer", "minimum": 1 },
+    "capability": { "$ref": "wallet-capability.v1.json#/$defs/capability_grant" },
+    "user_authorization": {
+      "type": ["object", "null"],
+      "required": ["decision", "decided_at", "surface"],
+      "additionalProperties": false,
+      "properties": {
+        "decision": { "const": "approved", "description": "only approved authorizations may be embedded; rejections terminate earlier" },
+        "decided_at": { "type": "string", "format": "date-time" },
+        "surface": { "enum": ["cli_prompt", "desktop_trusted_surface", "hardware_device"], "description": "cli_prompt is a spoofable surface — labeled prototype limitation" },
+        "escalation_acknowledged": { "type": ["boolean", "null"], "description": "required true when decision verdict was escalate" }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["evm_transaction", "typed_data", "personal_message"] },
+        "transaction": { "type": ["object", "null"], "description": "EVM tx fields for kind=evm_transaction" },
+        "typed_data_json": { "type": ["string", "null"] },
+        "message_hex": { "type": ["string", "null"], "pattern": "^0x([0-9a-fA-F]{2})*$" }
+      }
+    },
+    "ext": { "type": "object" }
+  }
+}

@@ -1,0 +1,75 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.91"
+license = "Apache-2.0"
+repository = "local"
+
+[workspace.dependencies]
+# Pinned via committed Cargo.lock (see CONTRIBUTING.md).
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde", "clock"], default-features = false }
+sha2 = "0.10"
+hex = "0.4"
+alloy = { version = "2.1.0", default-features = false }
+# EIP-712 typed-data resolver (CL-EVM-003 full parsing). Pinned to the same
+# version alloy 2.1.0 already vendors; "eip712" here is the narrow
+# alloy-dyn-abi feature (encodeType/encodeData/hashStruct/domain separator),
+# not alloy's own umbrella "eip712" feature, which also forwards to the
+# optional AWS/GCP/Ledger/Turnkey remote-signer crates this workspace does
+# not use.
+alloy-dyn-abi = { version = "1.6.0", default-features = false, features = ["std", "eip712"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "io-util"] }
+clap = { version = "4", features = ["derive"] }
+proptest = "1"
+# Solana split crates (ADR-016): no monolithic solana-sdk.
+solana-hash = "3.0"
+solana-keypair = "3.0"
+# ADR-021 key handling: five8 is the exact base58 decoder solana-keypair
+# itself uses (already in the lockfile transitively — no new supply-chain
+# surface); zeroize wipes the operator-pasted key buffers after parse.
+five8 = "1.0"
+zeroize = "1"
+base64 = "0.22"
+solana-message = "3.0"
+solana-pubkey = "3.0"
+solana-rpc-client = "3"
+solana-rpc-client-api = "3"
+solana-signature = "3.0"
+solana-signer = "3.0"
+solana-system-interface = { version = "2", features = ["bincode"] }
+# "verify" is needed by vault tests (Transaction::verify); without it here,
+# isolated `-p cipherlayer-vault` builds fail while workspace builds pass on
+# feature unification — a footgun found twice.
+solana-transaction = { version = "3.0", features = ["bincode", "verify"] }
+solana-transaction-status-client-types = "3"
+litesvm = "0.10"
+bincode = "1"
+# Bitcoin (ADR-017): rust-bitcoin for all consensus types; raw JSON-RPC over
+# reqwest for the small node surface (see cipherlayer-btc).
+bitcoin = { version = "0.32", features = ["rand-std"] }
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+# RPC endpoint validation must parse URL authorities structurally; string
+# prefix/split checks misclassify DNS names that resemble loopback addresses.
+url = "2"
+
+cipherlayer-types = { path = "crates/cipherlayer-types" }
+cipherlayer-vault = { path = "crates/cipherlayer-vault" }
+cipherlayer-vaultd = { path = "crates/cipherlayer-vaultd" }
+cipherlayer-policy = { path = "crates/cipherlayer-policy" }
+cipherlayer-chain = { path = "crates/cipherlayer-chain" }
+cipherlayer-evm = { path = "crates/cipherlayer-evm" }
+cipherlayer-sol = { path = "crates/cipherlayer-sol" }
+cipherlayer-btc = { path = "crates/cipherlayer-btc" }
+cipherlayer-intent = { path = "crates/cipherlayer-intent" }
+cipherlayer-simulation = { path = "crates/cipherlayer-simulation" }
+cipherlayer-risk = { path = "crates/cipherlayer-risk" }
+cipherlayer-audit = { path = "crates/cipherlayer-audit" }
+cipherlayer-provider = { path = "crates/cipherlayer-provider" }

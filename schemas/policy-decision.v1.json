@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/policy-decision.v1.json",
+  "title": "PolicyDecision",
+  "description": "Deterministic policy outcome with reason codes. A decision is never produced without listing the rules consulted; deny is terminal and cannot be overridden by any advisory input. v1.1 (protocol v0.4, additive): evidence_considered.simulation gains not_applicable, distinct from unavailable — 'evaluated and out of scope' (typed_data/personal_message signature requests, which have no on-chain transaction to simulate) versus 'should have run and didn't' (unavailable, which still takes the restrictive unknown-action path; not_applicable does not).",
+  "type": "object",
+  "required": ["schema_version", "decision_id", "request_id", "intent_id", "decided_at", "policy_id", "verdict", "reasons", "provenance"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "decision_id": { "type": "string", "format": "uuid" },
+    "request_id": { "type": "string", "format": "uuid" },
+    "intent_id": { "type": "string", "format": "uuid" },
+    "decided_at": { "type": "string", "format": "date-time" },
+    "policy_id": { "type": "string", "format": "uuid" },
+    "verdict": { "enum": ["allow", "escalate", "deny"] },
+    "reasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["code", "rule", "detail"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string", "pattern": "^POL-[A-Z]+-[0-9]{3}$", "description": "stable reason code, e.g. POL-APR-001" },
+          "rule": { "type": "string", "description": "which policy rule produced this reason" },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "evidence_considered": {
+      "type": "object",
+      "description": "explicit record of evidence availability at decision time — 'absent' evidence must appear here as unknown, proving the restrictive path was taken knowingly",
+      "required": ["intent_confidence", "simulation", "risk"],
+      "additionalProperties": false,
+      "properties": {
+        "intent_confidence": { "enum": ["exact", "high", "partial", "unknown"] },
+        "simulation": { "enum": ["success", "revert", "simulation_error", "unavailable", "not_applicable"] },
+        "risk": { "enum": ["low", "medium", "high", "critical", "unknown", "conflicting", "unavailable"] }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["producer", "producer_version"],
+      "additionalProperties": false,
+      "properties": {
+        "producer": { "type": "string" },
+        "producer_version": { "type": "string" }
+      }
+    },
+    "ext": { "type": "object" }
+  }
+}

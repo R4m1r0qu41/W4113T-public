@@ -1,0 +1,22 @@
+[package]
+name = "cipherlayer-provider"
+description = "Wallet-provider request envelope, permission scopes, and routing (TB1 broker)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+cipherlayer-types = { workspace = true }
+cipherlayer-chain = { workspace = true }
+cipherlayer-evm = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+hex = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"
+proptest = { workspace = true }

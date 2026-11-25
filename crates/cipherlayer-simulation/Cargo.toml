@@ -1,0 +1,20 @@
+[package]
+name = "cipherlayer-simulation"
+description = "Provider-neutral transaction simulation with an Anvil local-node implementation. Evidence, never a guarantee."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+cipherlayer-types = { workspace = true }
+cipherlayer-intent = { workspace = true }
+cipherlayer-evm = { workspace = true }
+alloy = { workspace = true, features = ["std", "providers", "provider-http", "reqwest-rustls-tls", "rpc-types", "json"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+hex = { workspace = true }
+tokio = { version = "1", features = ["time"] }

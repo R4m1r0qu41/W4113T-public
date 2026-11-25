@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/policy.v1.json",
+  "title": "Policy",
+  "description": "Machine-readable policy document. Evaluation is deterministic: same policy + same evidence = same decision. unlimited_approval_action may be 'deny' or 'escalate' but never 'allow' (schema-enforced). Institutional extensions (roles, workflows, jurisdictions) reserved for v2.",
+  "type": "object",
+  "required": ["schema_version", "policy_id", "name", "created_at", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "policy_id": { "type": "string", "format": "uuid" },
+    "name": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowed_chain_ids": {
+          "type": ["array", "null"],
+          "items": { "type": "integer", "minimum": 1 },
+          "description": "null = evaluated, no restriction; empty array = deny all chains"
+        },
+        "contract_allowlist": {
+          "type": ["array", "null"],
+          "items": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$" },
+          "description": "when non-null, interactions restricted to these targets"
+        },
+        "contract_denylist": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$" }
+        },
+        "function_denylist": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^0x[0-9a-fA-F]{8}$" },
+          "description": "denied function selectors"
+        },
+        "asset_restrictions": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "when non-null, only these assets ('native' or token addresses) may move"
+        },
+        "max_value_wei_per_tx": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" },
+        "max_gas_limit": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" },
+        "unlimited_approval_action": {
+          "enum": ["deny", "escalate"],
+          "default": "deny",
+          "description": "action for unlimited ERC-20 approvals; 'allow' is intentionally not a member (CL-POL-002, AC-005)"
+        },
+        "unlimited_approval_override": {
+          "type": ["object", "null"],
+          "description": "v1.1 (AC-005 operator decision 2026-07-04): time-boxed soft override. While active (evaluated against the intent's created_at), unlimited approvals are ESCALATED instead of the default action — never silently allowed. Window bounded to 720 hours (30 days); must be refreshed after expiry. Reminders and periodic unlimited-approval summaries are consumer-UI scope; the audit log carries the data.",
+          "required": ["enabled_at", "expires_at"],
+          "additionalProperties": false,
+          "properties": {
+            "enabled_at": { "type": "string", "format": "date-time" },
+            "expires_at": { "type": "string", "format": "date-time", "description": "must lie within (enabled_at, enabled_at + 720h]" },
+            "reason": { "type": ["string", "null"] }
+          }
+        },
+        "approval_amount_escalation_threshold_wei": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$", "description": "bounded approvals above this escalate" },
+        "unknown_action_behavior": {
+          "enum": ["deny", "escalate"],
+          "default": "escalate",
+          "description": "behavior when decoded action or simulation is unknown/failed; 'allow' intentionally impossible (CL-POL-004)"
+        },
+        "risk_escalation_at": {
+          "enum": ["low", "medium", "high", "critical"],
+          "default": "high",
+          "description": "risk level at/above which escalation is required; unknown/conflicting always escalate"
+        },
+        "hardware_confirmation_above_wei": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$", "description": "reserved: escalate to hardware confirmation (adapter deferred)" },
+        "session_time_restrictions": { "type": ["object", "null"], "description": "reserved for v1.x: time-of-day / expiry constraints on grants" }
+      }
+    },
+    "provenance": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "author": { "type": ["string", "null"] },
+        "source_file": { "type": ["string", "null"] }
+      }
+    },
+    "ext": { "type": "object" }
+  }
+}

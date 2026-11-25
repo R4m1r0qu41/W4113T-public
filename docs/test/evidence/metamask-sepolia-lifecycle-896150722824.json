@@ -1,0 +1,13 @@
+{
+  "schema": "cipherlayer-metamask-lifecycle.v1",
+  "network": "sepolia",
+  "chain_id": 11155111,
+  "tx_hash": "0x89615072282414b6745e554e9187a2445becaa770cb279e2629c3f4fe7f2f84d",
+  "from": "0x7cd33930465a2258b89a25b59a1acd5aa033932e",
+  "to": "0x7cb85e88a52726d70ccf26308f46fa2e7522c1f4",
+  "status": "success",
+  "block_number": 11220309,
+  "rpc_used": "https://ethereum-sepolia-rpc.publicnode.com",
+  "verified_at": "2026-07-07T05:20:52Z",
+  "role": "observer"
+}

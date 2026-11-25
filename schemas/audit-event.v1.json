@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/audit-event.v1.json",
+  "title": "AuditEvent",
+  "description": "One append-only, hash-chained lifecycle event (one JSONL line). event_hash = SHA-256 over canonical serialization of (sequence, occurred_at, kind, request_id, payload, prev_hash). Tamper-EVIDENT, not immutable (ADR-007). Never contains key material.",
+  "type": "object",
+  "required": ["schema_version", "event_id", "sequence", "occurred_at", "kind", "payload", "prev_hash", "event_hash"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "event_id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 0, "description": "monotonic, gap-free within one log file" },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "kind": {
+      "enum": [
+        "ConnectionRequested", "PermissionGranted", "PermissionDenied", "PermissionRevoked",
+        "RequestReceived", "RequestValidated", "PermissionChecked",
+        "IntentDecoded", "SimulationCompleted", "SimulationFailed",
+        "RiskEvaluated", "PolicyEvaluated", "UserDecision",
+        "SignatureCreated", "SigningFailed",
+        "BroadcastCompleted", "BroadcastFailed",
+        "StateTransition", "IllegalTransitionAttempted",
+        "VaultLocked", "VaultUnlocked", "Failure"
+      ],
+      "description": "distinguishes requested intent, decoded intent, simulated result, policy outcome, user decision, signature result, broadcast result, failures, revocations (BP §4.17)"
+    },
+    "request_id": { "type": ["string", "null"], "format": "uuid", "description": "null for events not tied to a request (e.g. VaultLocked)" },
+    "payload": { "type": "object", "description": "kind-specific structured payload (referenced schema instances or summaries); never key material, never full raw signatures beyond broadcast artifacts" },
+    "prev_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "hash of previous event; genesis uses sha256 of the fixed tag 'cipherlayer-audit-genesis-v1'" },
+    "event_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "ext": { "type": "object" }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "pin_schema_version": "0.1",
+  "description": "Pinned Scam Guard (FPL) detector-contract artifacts consumed by the CipherLayer Wallet risk layer (cipherlayer-risk). Read-only copies; never edit in place. Family convention per operator decision 2026-07-04 (register AC-001), Arrow/Tarquin PIN format.",
+  "source_repo": "Dev/CipherLayer/scam-guard",
+  "compatibility": {
+    "detector_contract_version": "0.1.0",
+    "compatibility_role": "consumer"
+  },
+  "pins": [
+    {
+      "artifact": "detector-output-schema",
+      "version": "1.0",
+      "source_commit": "cdf63a0d7256c0bd8191559ba879426051cca716",
+      "source_path": "exports/detector-output.v1.json",
+      "hash": "sha256:f0a0f67600a8de7ccd85aeb5b1aa1d50e000f8dafc84225085f18a629879a5ae",
+      "pinned_at": "2026-07-04",
+      "purpose": "Wire format of one detector finding; mirrored by cipherlayer-risk::DetectorOutput and referenced by schemas/risk-evidence-bundle.v1.json."
+    },
+    {
+      "artifact": "reason-code-registry",
+      "version": "1.1",
+      "source_commit": "0e738ee",
+      "source_path": "exports/reason-codes-registry.v1.json",
+      "hash": "sha256:d80fdb73c193a550e7668880eb7054f952e9159133289c9fd06e8d3d7d7172c6",
+      "pinned_at": "2026-07-11",
+      "purpose": "Operative stable SG-* Reason Code registry validated by the subprocess adapter before findings reach wallet risk evidence."
+    },
+    {
+      "artifact": "detector-interface-contract",
+      "version": "0.1.0",
+      "source_commit": "cdf63a0d7256c0bd8191559ba879426051cca716",
+      "source_path": "exports/detector-interface-v0.1.md",
+      "hash": "sha256:d77ec7618d75cf14b988e10b3f12822fe766b1f51e1a9cd4ca824b4a5dbba573",
+      "pinned_at": "2026-07-04",
+      "purpose": "Normative consumer obligations: preserve findings, unknown never low, conflicts visible, findings never authorize."
+    }
+  ],
+  "update_procedure": "Re-copy from scam-guard exports/ at a chosen commit; update source_commit, hashes, pinned_at; run `cargo test -p cipherlayer-risk`; record semantic changes in an ADR."
+}

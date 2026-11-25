@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/transaction-intent.v1.json",
+  "title": "TransactionIntent",
+  "description": "Canonical decoded intent. Distinguishes raw request, decoded action, affected assets, spender, recipient, allowance, expected balance changes, authority changes, chain, gas, evidence, unresolved fields, confidence, provenance. null = evaluated-and-unknown; absent optional = not evaluated.",
+  "type": "object",
+  "required": ["schema_version", "intent_id", "request_id", "created_at", "chain_id", "decoded_action", "unresolved_fields", "confidence", "provenance"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "intent_id": { "type": "string", "format": "uuid" },
+    "request_id": { "type": "string", "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "chain_id": { "type": "integer", "minimum": 1 },
+    "raw": {
+      "type": "object",
+      "description": "verbatim copy of the envelope payload this intent was decoded from",
+      "additionalProperties": true
+    },
+    "decoded_action": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": ["native_transfer", "erc20_transfer", "erc20_transfer_from", "erc20_approve", "erc20_increase_allowance", "erc721_transfer", "set_approval_for_all", "permit", "contract_call", "contract_creation", "typed_data_sign", "personal_sign", "unknown"],
+          "description": "unknown means the decoder could not classify — consumers must take the restrictive path. v1.1 added erc20_increase_allowance, erc721_transfer, set_approval_for_all (additive)."
+        },
+        "function_selector": { "type": ["string", "null"], "pattern": "^0x[0-9a-fA-F]{8}$" },
+        "function_signature": { "type": ["string", "null"] },
+        "signature_class": { "enum": ["login", "typed_data", "permit", "approval", "ownership_transfer", "delegation", "contract_upgrade", "governance_vote", "bridge_deposit", "cross_chain_message", "unknown", null] }
+      }
+    },
+    "asset_changes": {
+      "type": "array",
+      "description": "expected balance changes (from decoding; simulation evidence refines them)",
+      "items": {
+        "type": "object",
+        "required": ["asset", "holder", "direction", "amount"],
+        "additionalProperties": false,
+        "properties": {
+          "asset": { "type": "string", "description": "'native' or token contract address" },
+          "holder": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$" },
+          "direction": { "enum": ["debit", "credit", "unknown"] },
+          "amount": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" }
+        }
+      }
+    },
+    "spender": { "type": ["string", "null"], "pattern": "^0x[0-9a-fA-F]{40}$" },
+    "recipient": { "type": ["string", "null"], "pattern": "^0x[0-9a-fA-F]{40}$" },
+    "allowance": {
+      "type": ["object", "null"],
+      "description": "present for approvals/permits; null when approval detected but amount unresolved",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["exact", "unlimited", "unknown"] },
+        "amount": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" },
+        "token": { "type": ["string", "null"], "pattern": "^0x[0-9a-fA-F]{40}$" }
+      }
+    },
+    "domain_chain_id_matches": { "type": "boolean", "description": "v1.1 (protocol v0.4, additive): for typed_data requests, whether the EIP-712 domain's declared chainId matches the session/envelope chain_id. Absent = not evaluated (not a typed_data request, or the domain omitted chainId — legal per EIP-712, never treated as a match). false feeds policy rule POL-CHAIN-002 (deny)." },
+    "authority_changes": {
+      "type": "array",
+      "description": "ownership or authority changes (ownership transfer, delegation, admin change)",
+      "items": {
+        "type": "object",
+        "required": ["kind"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "enum": ["ownership_transfer", "delegation", "admin_change", "session_key_grant", "unknown"] },
+          "from": { "type": ["string", "null"] },
+          "to": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "custody_context": {
+      "enum": ["self_custody", "external_custody", "smart_account", "multisig", "delegated", "session_key", "watch_only", "unknown"],
+      "description": "custody/authority classification of the signing account (CL-LEG-003)"
+    },
+    "gas": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "limit": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" },
+        "estimated": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" }
+      }
+    },
+    "simulation_evidence_id": { "type": ["string", "null"], "format": "uuid", "description": "reference to simulation-result; null = simulation attempted and unavailable" },
+    "risk_evidence_id": { "type": ["string", "null"], "format": "uuid" },
+    "proxy_info": { "type": ["object", "null"], "description": "reserved for proxy-call awareness (CL-EVM-006, unpopulated in v1.0)" },
+    "unresolved_fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "names of fields the decoder could not resolve — must be surfaced, never hidden"
+    },
+    "confidence": { "enum": ["exact", "high", "partial", "unknown"], "description": "decoder confidence in the classification" },
+    "provenance": {
+      "type": "object",
+      "required": ["producer", "producer_version"],
+      "additionalProperties": false,
+      "properties": {
+        "producer": { "type": "string" },
+        "producer_version": { "type": "string" }
+      }
+    },
+    "ext": { "type": "object" }
+  }
+}

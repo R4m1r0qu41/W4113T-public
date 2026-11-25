@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "policy_id": "6f1cbb3e-2f36-4a70-9c2e-52d6a0a1c001",
+  "name": "default-dev",
+  "created_at": "2026-07-04T00:00:00Z",
+  "rules": {
+    "allowed_chain_ids": [31337],
+    "contract_allowlist": null,
+    "contract_denylist": [],
+    "function_denylist": [],
+    "max_value_wei_per_tx": "1000000000000000000000",
+    "max_gas_limit": "10000000",
+    "unlimited_approval_action": "deny",
+    "approval_amount_escalation_threshold_wei": "1000000000000000000000000",
+    "unknown_action_behavior": "escalate",
+    "risk_escalation_at": "high"
+  }
+}

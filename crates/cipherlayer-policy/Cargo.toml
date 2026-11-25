@@ -1,0 +1,17 @@
+[package]
+name = "cipherlayer-policy"
+description = "Deterministic policy engine: machine-readable rules, reasoned decisions, unlimited-approval default-deny."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+cipherlayer-types = { workspace = true }
+cipherlayer-intent = { workspace = true }
+cipherlayer-evm = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }

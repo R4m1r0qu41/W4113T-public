@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/vault-sol-signing.v1.json",
+  "title": "VaultSolSigning",
+  "description": "ADR-021: the two-phase Solana external-signer ceremony over the vaultd IPC. This top-level shape is the PHASE 1 request (sol_approve_facts): the operator-entered facts; the chain-labeled approval phrase is typed on vaultd's own terminal and NEVER travels this wire. The other messages are in $defs: sol_sign (phase 2 request — the adapter-built message + authoritative final fee; the private key is pasted on vaultd's terminal with echo off and NEVER travels this wire in either direction), sol_approve_response / sol_sign_response (the response carries only the public key and the signed artifact), and error. Approvals are single-use with a ~90s expiry (the blockhash lifetime bound); any phase-2 attempt consumes the approval, and a failed or expired ceremony re-runs in full (no silent re-sign). Scope: exactly one system-program transfer per message.",
+  "type": "object",
+  "required": ["message", "cluster_chain_id", "facts"],
+  "additionalProperties": false,
+  "properties": {
+    "message": { "const": "sol_approve_facts" },
+    "cluster_chain_id": { "enum": [900003, 900004], "description": "internal registry ids (devnet / mainnet-beta) — reserved non-EVM band, valid ONLY on this same-user vault IPC, never on any browser-facing wire" },
+    "facts": { "$ref": "#/$defs/facts" }
+  },
+  "$defs": {
+    "facts": {
+      "type": "object",
+      "required": ["from_pubkey", "to_pubkey", "lamports"],
+      "additionalProperties": false,
+      "properties": {
+        "from_pubkey": { "type": "string", "minLength": 32, "maxLength": 44, "description": "base58; the key pasted in phase 2 must derive to exactly this" },
+        "to_pubkey": { "type": "string", "minLength": 32, "maxLength": 44 },
+        "lamports": { "type": "integer", "minimum": 1 },
+        "fee_estimate_lamports": { "type": ["integer", "null"], "minimum": 0, "description": "authoritative getFeeForMessage result for a provisional message, labeled as pre-approval estimate; null = unknown, which refuses on mainnet (unknown is not evidence, ADR-021 §4)" }
+      }
+    },
+    "sol_sign": {
+      "type": "object",
+      "required": ["message", "nonce", "message_hex"],
+      "additionalProperties": false,
+      "properties": {
+        "message": { "const": "sol_sign" },
+        "nonce": { "type": "string", "format": "uuid", "description": "from sol_approve_response; single-use — consumed by this attempt regardless of outcome" },
+        "message_hex": { "type": "string", "pattern": "^(0x)?([0-9a-fA-F]{2})+$", "description": "Message::serialize() bytes of the adapter-built message with a FRESH blockhash. vaultd independently re-decodes this and refuses any deviation from the approved facts (fee payer, single transfer, recipient, amount, num_required_signatures == 1)" },
+        "final_fee_lamports": { "type": ["integer", "null"], "minimum": 0, "description": "authoritative fee for THIS message; null refuses on mainnet; a value above the approved estimate refuses (FeeExceedsApproved)" }
+      }
+    },
+    "sol_approve_response": {
+      "type": "object",
+      "required": ["message", "nonce", "expires_at", "cluster_name"],
+      "additionalProperties": false,
+      "properties": {
+        "message": { "const": "sol_approve_response" },
+        "nonce": { "type": "string", "format": "uuid" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "cluster_name": { "type": "string" }
+      }
+    },
+    "sol_sign_response": {
+      "type": "object",
+      "required": ["message", "pubkey", "signature", "raw_hex"],
+      "additionalProperties": false,
+      "properties": {
+        "message": { "const": "sol_sign_response" },
+        "pubkey": { "type": "string", "description": "base58 pubkey the key derived to (== approved from_pubkey)" },
+        "signature": { "type": "string", "description": "base58 ed25519 transaction signature (the chain-native tx reference)" },
+        "raw_hex": { "type": "string", "pattern": "^([0-9a-fA-F]{2})+$", "description": "bincode-serialized signed transaction, ready to broadcast. NEVER key material." }
+      }
+    },
+    "error": {
+      "type": "object",
+      "required": ["message", "code", "detail"],
+      "additionalProperties": false,
+      "properties": {
+        "message": { "const": "error" },
+        "code": { "type": "string", "pattern": "^VLT-(SOL|SUR)-[0-9]{3}$", "description": "Ceremony-level refusals (this schema's scope). VLT-SOL-001 cluster not permitted · VLT-SOL-002 approval phrase mismatch · VLT-SOL-003 invalid facts · VLT-SOL-004 fee refused (mainnet unknown, or final exceeds approved estimate) · VLT-SOL-005 no/expired/mismatched approval (full re-run required) · VLT-SOL-006 unsignable message (undecodable hex, malformed, non-transfer, multi-transfer, wrong signature count — an undecodable phase-2 attempt still consumes the approval, ADR-021 §6) · VLT-SOL-007 message deviates from approved facts · VLT-SOL-008 key refused (malformed, or derives to the wrong address; detail never echoes key input) · VLT-SOL-009 signer error · VLT-SOL-010 vault is locked (the operator lock gates both phases, checked before any terminal prompt; locking drops any pending approval — ADR-021 §6) · VLT-SUR-001 vaultd has no controlling terminal (fail closed — the ceremony requires a tty). Note: protocol-framing failures shared with every vaultd request (malformed_or_unsupported, size_cap_exceeded) use the vaultd transport error envelope, not this ceremony pattern." },
+        "detail": { "type": "string" }
+      }
+    }
+  }
+}

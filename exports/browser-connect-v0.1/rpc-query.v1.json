@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/rpc-query.v1.json",
+  "title": "RpcQuery",
+  "description": "Browser-connect v0.4 read-only JSON-RPC proxy (`rpc_query`, wire message over the connect-serve socket — same lightweight-message convention as connect_request/permission_revoke, which also carry no schema_version/request_id envelope). Whitelist-only — the wallet forwards nothing outside a small, hardcoded set of pure chain-state reads (see properties/method) — executed only against the session's granted chain via the wallet's own RPC endpoint, never a caller-supplied one. Capsule-bearing (asserts origin/capsule_id) so it requires host attestation (ADR-013) exactly like connect_request/transaction_request, and requires an active permission grant (read-only class suffices) for the requesting capsule on the requested chain. No signing consequence: this path never reaches decode/policy/vault. Per-query audit events are deliberately not emitted (see ADR-019) — connection-level enforcement (attestation, permission, whitelist, size caps) still applies on every call. This top-level shape is the request; the response is `$defs/response`.",
+  "type": "object",
+  "required": ["origin", "capsule_id", "chain_id", "method", "params"],
+  "additionalProperties": false,
+  "properties": {
+    "origin": { "type": "string", "minLength": 1, "description": "dapp origin URL, same identity model as connect_request" },
+    "capsule_id": { "type": "string", "minLength": 1, "description": "browser capsule identity, same identity model as connect_request" },
+    "chain_id": { "type": "integer", "minimum": 1 },
+    "method": {
+      "enum": [
+        "eth_call",
+        "eth_estimateGas",
+        "eth_blockNumber",
+        "eth_getBalance",
+        "eth_gasPrice",
+        "eth_getTransactionByHash",
+        "eth_getTransactionReceipt",
+        "net_version"
+      ],
+      "description": "STRICT hardcoded whitelist — not caller-extensible. Anything else is refused (malformed_or_unsupported) before it is ever forwarded."
+    },
+    "params": {
+      "description": "positional JSON-RPC params for `method`, exactly as EIP-1193/eth-JSON-RPC defines them (a JSON array; absent/null treated as no params)"
+    }
+  },
+  "$defs": {
+    "response": {
+      "type": "object",
+      "required": ["message", "result"],
+      "additionalProperties": false,
+      "description": "on success: {\"message\":\"rpc_query_response\",\"result\":<raw JSON-RPC result>}. Refusals use the transport's existing {\"message\":\"error\",\"code\":...,\"detail\":...} shape (malformed_or_unsupported for off-whitelist methods, size_cap_exceeded, unknown_chain, permission_required, attestation_required, identity_required, rpc_unavailable) — never a bespoke error shape for this message kind.",
+      "properties": {
+        "message": { "const": "rpc_query_response" },
+        "result": { "description": "the raw JSON-RPC result, forwarded verbatim" }
+      }
+    }
+  }
+}

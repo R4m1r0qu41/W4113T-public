@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/transaction-request-envelope.v1.json",
+  "title": "TransactionRequestEnvelope",
+  "description": "Inbound request crossing TB1 into the provider broker. Caller identity is mandatory; identity-less envelopes are rejected. Backwards compatibility: additive minor versions only; breaking changes create v2. v1.1 (protocol v0.4, additive): payload.kind distinguishes evm_transaction (default, absent = v0.3-shaped clients unaffected) from typed_data (eth_signTypedData_v4) and personal_message (personal_sign) signature-only requests, carried via the new optional typed_data_json/message_hex fields. payload.to is no longer required (typed_data/personal_message have no `to`); evm_transaction payloads are unaffected since they still always send it.",
+  "type": "object",
+  "required": ["schema_version", "request_id", "received_at", "caller", "chain_id", "access", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "request_id": { "type": "string", "format": "uuid", "description": "Stable ID for the whole lifecycle" },
+    "received_at": { "type": "string", "format": "date-time" },
+    "protocol_version": { "type": "string", "description": "browser-connect protocol version, when arriving via a browser broker" },
+    "caller": {
+      "type": "object",
+      "description": "Mandatory caller identity. Empty origin AND empty app_id is invalid.",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["dapp", "cli", "desktop", "agent", "unknown"] },
+        "origin": { "type": "string", "minLength": 1, "description": "dapp origin URL or local caller URI" },
+        "app_id": { "type": "string", "minLength": 1 },
+        "capsule_id": { "type": "string", "description": "browser capsule identity, when applicable" }
+      }
+    },
+    "chain_id": { "type": "integer", "minimum": 1 },
+    "access": { "enum": ["read_only", "signing"], "description": "declared access class; signing requests traverse the full pipeline" },
+    "payload": {
+      "type": "object",
+      "description": "EVM transaction fields (raw request; decoding happens downstream) for kind=evm_transaction, or a typed_data/personal_message signature payload (v1.1, protocol v0.4).",
+      "required": ["from"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$" },
+        "to": { "type": ["string", "null"], "pattern": "^0x[0-9a-fA-F]{40}$", "description": "evm_transaction only; null = contract creation (evaluated and explicitly creation)" },
+        "value_wei": { "type": "string", "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$", "description": "decimal string; absent = 0 not assumed, treated as not provided and defaulted to \"0\" only at validation with an audit note" },
+        "data": { "type": "string", "pattern": "^0x([0-9a-fA-F]{2})*$" },
+        "gas_limit": { "type": ["string", "null"], "pattern": "^([0-9]+|0x[0-9a-fA-F]+)$" },
+        "nonce": { "type": ["integer", "null"], "minimum": 0 },
+        "kind": { "enum": ["evm_transaction", "typed_data", "personal_message"], "default": "evm_transaction", "description": "v1.1: absent = evm_transaction (v0.3-client default)" },
+        "typed_data_json": { "type": ["string", "null"], "description": "required iff kind=typed_data: the full eth_signTypedData_v4 JSON payload" },
+        "message_hex": { "type": ["string", "null"], "pattern": "^0x([0-9a-fA-F]{2})*$", "description": "required iff kind=personal_message: the raw message bytes, 0x-hex" }
+      }
+    },
+    "ext": { "type": "object", "description": "namespaced extension fields only" }
+  }
+}

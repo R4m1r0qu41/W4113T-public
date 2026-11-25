@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/scam-guard/reason-codes.v1.json",
+  "title": "ReasonCodeRegistry",
+  "description": "Seed registry of stable, machine-readable Reason Codes (contract v0.1). Codes are never reused or renumbered; deprecation is a flag. This seed covers the wallet consumer's first milestone; expansion belongs to the FPL specification.",
+  "type": "object",
+  "required": ["schema_version", "codes"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "codes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "title", "meaning", "deprecated"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string", "pattern": "^SG-[A-Z]+-[0-9]{3}$" },
+          "title": { "type": "string" },
+          "meaning": { "type": "string" },
+          "deprecated": { "type": "boolean" }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "1.0",
+      "codes": [
+        { "code": "SG-ALLOW-001", "title": "Unlimited allowance requested", "meaning": "The evaluated action grants an effectively unbounded token allowance to a spender.", "deprecated": false },
+        { "code": "SG-ALLOW-002", "title": "Allowance to unverified spender", "meaning": "An allowance is granted to a contract with no verification/reputation evidence available.", "deprecated": false },
+        { "code": "SG-DRAIN-001", "title": "Drainer-pattern interaction", "meaning": "The action matches a known wallet-drainer mechanic (e.g. broad approval followed by sweep authority).", "deprecated": false },
+        { "code": "SG-DOM-001", "title": "Lookalike domain", "meaning": "The origin domain is a homoglyph/typosquat candidate of a known target.", "deprecated": false },
+        { "code": "SG-DOM-002", "title": "Recently registered domain", "meaning": "The origin domain's observed age is below the caution threshold.", "deprecated": false },
+        { "code": "SG-IMP-001", "title": "Impersonation indicator", "meaning": "Content or identity signals impersonate a known brand, person, or contract.", "deprecated": false },
+        { "code": "SG-INJ-001", "title": "Command-injection ask", "meaning": "Content asks the target to execute commands, paste code, or bypass safeguards.", "deprecated": false },
+        { "code": "SG-CON-001", "title": "Unverified contract", "meaning": "No verified source or reputation evidence exists for the contract.", "deprecated": false },
+        { "code": "SG-UNK-001", "title": "Insufficient evidence", "meaning": "The detector could not gather enough evidence to assess the subject; result is unknown, not low.", "deprecated": false },
+        { "code": "SG-MOCK-001", "title": "Mock finding", "meaning": "Produced by a labeled mock detector for testing/demonstration; carries no real detection meaning.", "deprecated": false }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+[package]
+name = "cipherlayer-cli"
+description = "CipherLayer Wallet command-line interface and vertical-slice demo driver."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+cipherlayer-types = { workspace = true }
+cipherlayer-chain = { workspace = true }
+cipherlayer-evm = { workspace = true }
+cipherlayer-intent = { workspace = true }
+cipherlayer-provider = { workspace = true }
+cipherlayer-simulation = { workspace = true }
+cipherlayer-risk = { workspace = true }
+cipherlayer-policy = { workspace = true }
+cipherlayer-vault = { workspace = true }
+cipherlayer-audit = { workspace = true }
+# ADR-021: the console orchestrates the (non-secret) Solana ceremony steps.
+cipherlayer-sol = { workspace = true }
+solana-hash = { workspace = true }
+solana-pubkey = { workspace = true }
+alloy = { workspace = true, features = ["std", "providers", "provider-http", "reqwest-rustls-tls", "rpc-types", "json", "signer-local"] }
+clap = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+hex = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"
+# Boundary-level Solana security regressions drive the real vaultd daemon
+# over its Unix-socket IPC (external re-audit, 2026-07-20).
+cipherlayer-vaultd = { workspace = true, features = ["test-seams"] }

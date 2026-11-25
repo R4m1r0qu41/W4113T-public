@@ -1,0 +1,236 @@
+{
+ "contractName": "TestToken",
+ "source": "src/TestToken.sol",
+ "solc": "0.8.24",
+ "note": "Committed build artifact for the demo/tests. Rebuild: forge build, then scripts/update-artifacts.py (see README.md).",
+ "bytecode": "0x608060405234801561000f575f80fd5b5069d3c21bcecceda10000005f81815533808252600160205260408083208490555190927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9161006191815260200190565b60405180910390a3610650806100765f395ff3fe608060405234801561000f575f80fd5b5060043610610090575f3560e01c8063313ce56711610063578063313ce5671461012b57806370a082311461014557806395d89b4114610164578063a9059cbb14610186578063dd62ed3e14610199575f80fd5b806306fdde0314610094578063095ea7b3146100df57806318160ddd1461010257806323b872dd14610118575b5f80fd5b6100c96040518060400160405280601681526020017521b4b83432b92630bcb2b9102a32b9ba102a37b5b2b760511b81525081565b6040516100d691906104c7565b60405180910390f35b6100f26100ed36600461052e565b6101c3565b60405190151581526020016100d6565b61010a5f5481565b6040519081526020016100d6565b6100f2610126366004610556565b61022f565b610133601281565b60405160ff90911681526020016100d6565b61010a61015336600461058f565b60016020525f908152604090205481565b6100c96040518060400160405280600381526020016210d31560ea1b81525081565b6100f261019436600461052e565b6103e6565b61010a6101a73660046105af565b600260209081525f928352604080842090915290825290205481565b335f8181526002602090815260408083206001600160a01b038716808552925280832085905551919290917f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9259061021d9086815260200190565b60405180910390a35060015b92915050565b6001600160a01b0383165f908152600160205260408120548211156102925760405162461bcd60e51b8152602060048201526014602482015273696e73756666696369656e742062616c616e636560601b60448201526064015b60405180910390fd5b6001600160a01b0384165f908152600260209081526040808320338452909152902054828110156102fe5760405162461bcd60e51b8152602060048201526016602482015275696e73756666696369656e7420616c6c6f77616e636560501b6044820152606401610289565b5f1981146103345761031083826105f4565b6001600160a01b0386165f9081526002602090815260408083203384529091529020555b6001600160a01b0385165f908152600160205260408120805485929061035b9084906105f4565b90915550506001600160a01b0384165f9081526001602052604081208054859290610387908490610607565b92505081905550836001600160a01b0316856001600160a01b03167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef856040516103d391815260200190565b60405180910390a3506001949350505050565b335f9081526001602052604081205482111561043b5760405162461bcd60e51b8152602060048201526014602482015273696e73756666696369656e742062616c616e636560601b6044820152606401610289565b335f90815260016020526040812080548492906104599084906105f4565b90915550506001600160a01b0383165f9081526001602052604081208054849290610485908490610607565b90915550506040518281526001600160a01b0384169033907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9060200161021d565b5f602080835283518060208501525f5b818110156104f3578581018301518582016040015282016104d7565b505f604082860101526040601f19601f8301168501019250505092915050565b80356001600160a01b0381168114610529575f80fd5b919050565b5f806040838503121561053f575f80fd5b61054883610513565b946020939093013593505050565b5f805f60608486031215610568575f80fd5b61057184610513565b925061057f60208501610513565b9150604084013590509250925092565b5f6020828403121561059f575f80fd5b6105a882610513565b9392505050565b5f80604083850312156105c0575f80fd5b6105c983610513565b91506105d760208401610513565b90509250929050565b634e487b7160e01b5f52601160045260245ffd5b81810381811115610229576102296105e0565b80820180821115610229576102296105e056fea2646970667358221220a2cb983af8290b0d379a153b12c96eab0285215776892f2b6a7fce56a53af3d864736f6c63430008180033",
+ "abi": [
+  {
+   "type": "constructor",
+   "inputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "allowance",
+   "inputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "approve",
+   "inputs": [
+    {
+     "name": "spender",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "value",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "bool",
+     "internalType": "bool"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "balanceOf",
+   "inputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "decimals",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint8",
+     "internalType": "uint8"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "name",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "string",
+     "internalType": "string"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "symbol",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "string",
+     "internalType": "string"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "totalSupply",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "transfer",
+   "inputs": [
+    {
+     "name": "to",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "value",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "bool",
+     "internalType": "bool"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "transferFrom",
+   "inputs": [
+    {
+     "name": "from",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "to",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "value",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "bool",
+     "internalType": "bool"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "event",
+   "name": "Approval",
+   "inputs": [
+    {
+     "name": "owner",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "spender",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "value",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "Transfer",
+   "inputs": [
+    {
+     "name": "from",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "to",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "value",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    }
+   ],
+   "anonymous": false
+  }
+ ]
+}

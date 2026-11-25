@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipherlayer.dev/schemas/scam-guard/detector-output.v1.json",
+  "title": "DetectorOutput",
+  "description": "One finding from one FPL detector (contract v0.1). unknown is a first-class risk level; consumers must never map it to low. Conventions: RFC3339 timestamps; additionalProperties false with namespaced 'ext' for extension; breaking changes create v2.",
+  "type": "object",
+  "required": ["schema_version", "output_id", "detector", "evaluated_at", "subject", "risk_level", "confidence", "reason_codes", "explanation", "provenance"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "output_id": { "type": "string", "format": "uuid" },
+    "detector": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "evaluated_at": { "type": "string", "format": "date-time" },
+    "subject": {
+      "type": "object",
+      "required": ["kind", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["domain", "url", "address", "contract", "transaction_intent", "message_text"] },
+        "value": { "type": "string", "minLength": 1, "description": "domain/url/address string, or intent_id for transaction_intent" },
+        "chain_id": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "risk_level": { "enum": ["low", "medium", "high", "critical", "unknown"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^SG-[A-Z]+-[0-9]{3}$" }
+    },
+    "explanation": { "type": "string", "minLength": 1 },
+    "provenance": {
+      "type": "object",
+      "required": ["data_source_class"],
+      "additionalProperties": false,
+      "properties": {
+        "data_source_class": { "enum": ["local_heuristic", "local_dataset", "remote_feed", "model_assisted"] },
+        "dataset_version": { "type": ["string", "null"] },
+        "mock": { "type": ["boolean", "null"], "description": "true when the finding comes from a labeled mock detector — consumers must surface this" }
+      }
+    },
+    "ext": { "type": "object" }
+  }
+}
