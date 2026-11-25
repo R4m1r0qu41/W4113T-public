@@ -11,8 +11,6 @@ require() {
 }
 
 require README.md
-require CLAUDE.md
-require AGENTS.md
 require CONTRIBUTING.md
 require SECURITY.md
 require LICENSE
@@ -30,8 +28,6 @@ require docs/security/prototype-limitations.md
 require docs/legal/legal-and-regulatory-issues.md
 require docs/roadmap/implementation-roadmap.md
 require docs/testing/test-strategy.md
-require docs/source/CipherLayer_Web3_Stack_Unified_Scope_v1_0.md
-require docs/source/Cipherlayer_Web3_Browser_Full_Project_Scope_v0.1.md
 for n in 001 002 003 004 005 006 007 008 009 010; do
   ls docs/adr/ADR-${n}-*.md >/dev/null 2>&1 || { echo "MISSING ADR-${n}"; missing=1; }
 done

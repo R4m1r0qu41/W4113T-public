@@ -1,6 +1,6 @@
 # Requirements Matrix — CipherLayer Web3 Stack
 
-**Version:** 0.3 · **Dates:** 2026-07-03, operator decisions integrated 2026-07-05, reconciled to HEAD 2026-10-13 · **Maintainer:** wallet repo · `OP` = operator decision recorded in the ambiguities-and-conflicts register v0.2
+**Version:** 0.3 · **Dates:** 2026-07-03, operator decisions integrated 2026-07-05, reconciled to HEAD 2026-10-13, public snapshot 2026-11-25 · **Maintainer:** wallet repo · `OP` = operator decision recorded in the ambiguities-and-conflicts register v0.2
 
 Sources: `US` = `docs/source/CipherLayer_Web3_Stack_Unified_Scope_v1_0.md` (controlling), `BS` = `docs/source/Cipherlayer_Web3_Browser_Full_Project_Scope_v0.1.md` (supporting), `BP` = Fable 5 build prompt v1.2 (highest precedence).
 

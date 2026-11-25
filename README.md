@@ -99,7 +99,6 @@ Per [`docs/security/prototype-limitations.md`](docs/security/prototype-limitatio
 - [`docs/security/`](docs/security/) — security-claims register, prototype limitations
 - [`docs/legal/`](docs/legal/) — legal and regulatory issues register
 - [`docs/roadmap/`](docs/roadmap/) — implementation roadmap and gates
-- [`docs/source/`](docs/source/) — authoritative source specifications (do not edit)
 
 ## License
 
