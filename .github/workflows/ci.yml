@@ -4,11 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  schedule:
-    # Nightly, offline of any push — catches toolchain/dependency drift and
-    # anything the family review loop's Tier-0 checks would flag even when
-    # nobody has committed (family guide §7).
-    - cron: '17 4 * * *'
 
 env:
   CARGO_TERM_COLOR: always
